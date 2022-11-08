@@ -17,7 +17,7 @@ class GraphVisualization(ast.NodeVisitor):
         self.node_counter=0
     
     def generic_visit(self, node):
-        graph_node = pydot.Node(self.node_counter, label=node.__class__.__name__)
+        graph_node = pydot.Node(self.node_counter, label=type(node).__name__)
         self.graph.add_node(graph_node)
         if self.parent:
             self.graph.add_edge(pydot.Edge(self.parent[-1], graph_node))

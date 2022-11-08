@@ -1,7 +1,7 @@
 import ast
 import zss
 
-
+#maybe rename??
 class FunctionVisitor(ast.NodeTransformer):
     def __init__(self):
         self.node_number=0
@@ -53,6 +53,21 @@ class FunctionVisitor(ast.NodeTransformer):
         return node
 
 
+class ASTEmbedding(ast.NodeVisitor):
+    def __init__(self,k):
+        self.k=k
+        self.embeddings = dict()
+        self.current_embedding_nodes = []
+        self.current_embedding = ""
+
+    def generic_visit(self, node):
+        self.current_embedding_nodes.append(type(node).__name__)
+        super().generic_visit(node)
+        embedding = ".".join(self.current_embedding_nodes[-self.k:])
+        if(len(self.current_embedding_nodes)>=self.k):
+            self.embeddings[embedding] = self.embeddings.get(embedding, 0) + 1
+        self.current_embedding_nodes.pop()
+
 def diff(a, b):
     assert a is not None
     assert b is not None
@@ -67,3 +82,20 @@ def diff(a, b):
     res = zss.simple_distance(
         a, b, get_children=_get_children, get_label=_get_label)
     return res
+
+
+def jaccard(x, y) -> int:
+    num = 0.0
+    den = 0.0
+
+    keys = x.keys() | y.keys()
+
+    for k in keys:
+        m1 = x.get(k,0)
+        m2 = y.get(k,0)
+
+        num += min(m1, m2)
+        den += max(m1, m2)
+
+    return num/den
+  
