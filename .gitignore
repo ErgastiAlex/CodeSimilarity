@@ -1,3 +1,7 @@
 img/
+*.png
+
 
 **/__pycache__/
+
+pycode_similar.py

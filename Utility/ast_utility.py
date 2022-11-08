@@ -52,23 +52,18 @@ class FunctionVisitor(ast.NodeTransformer):
         self.generic_visit(node)
         return node
 
-class TreeDiff(object):
-    def diff(a, b):
-        assert a is not None
-        assert b is not None
 
-        def _str_dist(i, j):
-            return 0 if i == j else 1
-
-        def _get_label(n):
-            return type(n).__name__
-
-        def _get_children(n):
-            if not hasattr(n, 'children'):
-                n.children = list(ast.iter_child_nodes(n))
-            return n.children
-
-        res = zss.simple_distance(
-            a, b, get_children=_get_children, get_label=_get_label)
-
-        return res
+def diff(a, b):
+    assert a is not None
+    assert b is not None
+    def _str_dist(i, j):
+        return 0 if i == j else 1
+    def _get_label(n):
+        return type(n).__name__
+    def _get_children(n):
+        if not hasattr(n, 'children'):
+            n.children = list(ast.iter_child_nodes(n))
+        return n.children
+    res = zss.simple_distance(
+        a, b, get_children=_get_children, get_label=_get_label)
+    return res
