@@ -2,17 +2,32 @@ import ast
 import zss
 
 #maybe rename??
-class FunctionVisitor(ast.NodeTransformer):
+class ASTParser(ast.NodeTransformer):
     def __init__(self):
-        self.node_number=0
-        self.function_nodes = []  # List of function names
+        self.global_code_node_count=0 #number of nodes in global code
+        self.global_code=None #AST of the global code
+
+        self.function_node_count=[] #Number of nodes in each function
+        self.function_list = []  # List of function names
+
         self.class_list = []  # List of class names encapsulating functions
 
+
+
     def generic_visit(self, node):
-        self.node_number+=1
+        if len(self.function_list) == 0:
+            self.global_code_node_count += 1
+        else:
+            self.function_node_count[-1] += 1
         return super().generic_visit(node)
 
+    def visit_Module(self, node):
+        self.global_code=node
+        self.generic_visit(node)
+
     def visit_ClassDef(self, node):
+        self.global_code.body.remove(node)
+        
         # Add class name to list
         self.class_list.append(node.name)
 
@@ -25,7 +40,9 @@ class FunctionVisitor(ast.NodeTransformer):
         # Rename the node using the class name encapsulating the hierarchy
         node.name = ".".join(self.class_list + [node.name])
 
-        self.function_nodes.append(node)
+        self.function_list.append(node)
+        self.function_node_count.append(0)
+
         self.generic_visit(node)
 
     def visit_Name(self, node):
