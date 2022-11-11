@@ -1,6 +1,6 @@
 img/
 *.png
-
+**/*Icon
 
 **/__pycache__/
 
