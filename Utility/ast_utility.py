@@ -1,7 +1,6 @@
 import ast
 import zss
 
-#maybe rename??
 class ASTParser(ast.NodeTransformer):
     def __init__(self):
         self.global_code_node_count=0 #number of nodes in global code
@@ -96,10 +95,11 @@ def diff(a, b):
         if not hasattr(n, 'children'):
             n.children = list(ast.iter_child_nodes(n))
         return n.children
+    
+
     res = zss.simple_distance(
         a, b, get_children=_get_children, get_label=_get_label)
     return res
-
 
 def jaccard(x, y) -> int:
     num = 0.0
@@ -115,4 +115,9 @@ def jaccard(x, y) -> int:
         den += max(m1, m2)
 
     return num/den
+
+
+
+
+
   
