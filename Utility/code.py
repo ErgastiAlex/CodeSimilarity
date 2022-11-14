@@ -2,17 +2,20 @@ from Utility import ast_utility
 from Utility import diff_method
 import ast
 
-def get_embedding(tree):
-    embedding = ast_utility.ASTEmbedding(5)
+def get_embedding(tree,num_of_embedding=5,use_split_embedding=False):
+    if(use_split_embedding):
+        embedding=ast_utility.ASTEmbeddingSplitNode(num_of_embedding)
+    else:
+        embedding = ast_utility.ASTEmbedding(num_of_embedding)
     embedding.visit(tree)
     return embedding.embeddings
 
-def get_all_embeddings(tree_visitor):
+def get_all_embeddings(tree_visitor,num_of_embedding=5,use_split_embedding=False):
     functions_embedding=[]
-    functions_embedding.append(get_embedding(tree_visitor.global_code))
+    functions_embedding.append(get_embedding(tree_visitor.global_code,num_of_embedding,use_split_embedding))
 
     for function in tree_visitor.function_list:
-        functions_embedding.append(get_embedding(function))
+        functions_embedding.append(get_embedding(function,num_of_embedding,use_split_embedding))
     
     return functions_embedding
 
@@ -37,7 +40,7 @@ class FunctionRepresentation():
         self.function_tree_dim = function_tree_dim
 
 class Code():
-    def __init__(self,code_file,code_group="",code_name=""):
+    def __init__(self,code_file,code_group="",code_name="",num_of_embedding=5,use_split_embedding=False):
         self.code_file=code_file
         self.code_group=code_group
 
@@ -52,7 +55,7 @@ class Code():
         self.__functions_representation=[]
 
         trees,trees_dim=get_all_trees(tree_visitor)
-        embeddings=get_all_embeddings(tree_visitor)
+        embeddings=get_all_embeddings(tree_visitor,num_of_embedding,use_split_embedding)
 
         assert len(trees)==len(embeddings)
         assert len(trees)==len(trees_dim)

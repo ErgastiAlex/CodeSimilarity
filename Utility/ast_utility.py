@@ -84,6 +84,35 @@ class ASTEmbedding(ast.NodeVisitor):
             self.embeddings[embedding] = self.embeddings.get(embedding, 0) + 1
         self.current_embedding_nodes.pop()
 
+class ASTEmbeddingSplitNode(ast.NodeVisitor):
+    def __init__(self,k):
+        self.k=k
+        self.embeddings = dict()
+        self.child_count = []
+        self.current_embedding_nodes = []
+        self.current_embedding = ""
+
+    def generic_visit(self, node):
+        self.current_embedding_nodes.append(type(node).__name__)
+
+        self.child_count.append(len(list(ast.iter_child_nodes(node))))
+
+        if(self.child_count[-1]>1):
+            self.current_embedding_nodes.append("SplitNode")
+        
+        super().generic_visit(node)
+
+        if(len(self.current_embedding_nodes)>=self.k):
+            embedding = ".".join(self.current_embedding_nodes[-self.k:])
+            print(embedding)
+            self.embeddings[embedding] = self.embeddings.get(embedding, 0) + 1
+        
+        self.current_embedding_nodes.pop()
+        if(self.child_count[-1]>1):
+            self.current_embedding_nodes.pop()
+        self.child_count.pop()
+
+
 def diff(a, b):
     assert a is not None
     assert b is not None
