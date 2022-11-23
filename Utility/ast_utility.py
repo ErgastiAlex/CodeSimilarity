@@ -104,7 +104,6 @@ class ASTEmbeddingSplitNode(ast.NodeVisitor):
 
         if(len(self.current_embedding_nodes)>=self.k):
             embedding = ".".join(self.current_embedding_nodes[-self.k:])
-            print(embedding)
             self.embeddings[embedding] = self.embeddings.get(embedding, 0) + 1
         
         self.current_embedding_nodes.pop()

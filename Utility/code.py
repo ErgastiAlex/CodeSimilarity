@@ -49,6 +49,7 @@ class Code():
             tree = ast.parse(code_file.read())
         except:
             raise ParseException("Error parsing code")
+            
         tree_visitor=ast_utility.ASTParser()
         tree_visitor.visit(tree)
 
